@@ -41,7 +41,6 @@ class ADAS_ui(QDialog, from_class):
     def DrowsyDetection(self, frame):
         try:
             x1, y1, x2, y2 = self.FaceDetection(frame)
-            
             predict = self.DrowseDetectionModel(frame[y1:y2, x1:x2])
 
             if predict == 0:
@@ -49,11 +48,19 @@ class ADAS_ui(QDialog, from_class):
                 if self.duration > 2:
                     self.Drowsy.setStyleSheet("background-color: red")
                     self.Screen1.setStyleSheet("border: 5px solid red")
+                    try:
+                        self.Arduino.serial_port.write('0'.encode())
+                    except:
+                        pass
             else:
                 self.start = time.time()
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 self.Drowsy.setStyleSheet("background-color: green")
                 self.Screen1.setStyleSheet("border: 3px solid green")
+                try:
+                    self.Arduino.serial_port.write('1'.encode())
+                except:
+                    pass
         except:
             self.Drowsy.setStyleSheet("background-color: white")
             self.Screen1.setStyleSheet("border: 1px solid white")
@@ -81,16 +88,20 @@ class ADAS_ui(QDialog, from_class):
 
 
     def GetDistance(self, distance):
-        self.Front.setText(distance + 'cm')
-        try:
-            if eval(distance) < 10:
-                self.Front.setStyleSheet("border: 3px solid red")
-            elif eval(distance) < 20:
-                self.Front.setStyleSheet("border: 3px solid green")
-            else:
-                self.Front.setStyleSheet("border: 1px solid black")
-        except:
-            self.Front.setText('No Signal')
+        
+        if distance == '-1':
+            self.Front.setText('Drowsy')
+        else:
+            self.Front.setText(distance + 'cm')
+            try:
+                if eval(distance) < 10:
+                    self.Front.setStyleSheet("border: 3px solid red")
+                elif eval(distance) < 20:
+                    self.Front.setStyleSheet("border: 3px solid green")
+                else:
+                    self.Front.setStyleSheet("border: 1px solid black")
+            except:
+                self.Front.setText('No Signal')
 
 
 

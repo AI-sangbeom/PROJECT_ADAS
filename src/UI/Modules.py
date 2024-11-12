@@ -32,6 +32,11 @@ class Camera(QThread):
 class Arduino(QThread):
     distance_signal = pyqtSignal(str)  # 거리를 전달할 시그널
 
+    def __init__(self, parent=None):
+        super().__init__()
+        self.main = parent
+        self.serial_port = None
+
     def run(self):
         # 아두이노 시리얼 포트 열기
         arduino_port = '/dev/ttyACM0'
