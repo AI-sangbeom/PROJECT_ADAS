@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>988</width>
-    <height>569</height>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>130</x>
      <y>10</y>
      <width>201</width>
      <height>101</height>
@@ -141,7 +141,7 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>330</x>
      <y>10</y>
      <width>141</width>
      <height>101</height>
@@ -332,8 +332,8 @@
   <widget class="QLabel" name="BackGround">
    <property name="geometry">
     <rect>
-     <x>-20</x>
-     <y>-20</y>
+     <x>0</x>
+     <y>0</y>
      <width>1111</width>
      <height>781</height>
     </rect>
@@ -381,7 +381,8 @@
    <property name="styleSheet">
     <string notr="true">QLabel{
 	font: 12pt;
-font-weight: bold;	color: white;
+	font-weight: bold;	
+	color: rgb(255, 255, 255);
 }</string>
    </property>
    <property name="text">
@@ -435,7 +436,7 @@ font-weight: bold;	color: white;
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="btnBack">
    <property name="geometry">
     <rect>
      <x>900</x>
@@ -461,7 +462,7 @@ font-weight: bold;	color: white;
     </size>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_4">
+  <widget class="QPushButton" name="btnStop">
    <property name="geometry">
     <rect>
      <x>900</x>
@@ -487,7 +488,7 @@ font-weight: bold;	color: white;
     </size>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_5">
+  <widget class="QPushButton" name="btnGo">
    <property name="geometry">
     <rect>
      <x>900</x>
@@ -524,9 +525,9 @@ font-weight: bold;	color: white;
   <zorder>label</zorder>
   <zorder>label_2</zorder>
   <zorder>groupBox_5</zorder>
-  <zorder>pushButton_3</zorder>
-  <zorder>pushButton_4</zorder>
-  <zorder>pushButton_5</zorder>
+  <zorder>btnBack</zorder>
+  <zorder>btnStop</zorder>
+  <zorder>btnGo</zorder>
  </widget>
  <resources/>
  <connections/>
