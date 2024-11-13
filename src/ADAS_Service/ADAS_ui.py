@@ -10,7 +10,7 @@ from PyQt5.QtCore import *
 from PyQt5 import uic
 from Modules import *
 
-from_class = uic.loadUiType("src/UI/ADAS.ui")[0]
+from_class = uic.loadUiType("src/ADAS_Service/ADAS.ui")[0]
         
 class ADAS_ui(QDialog, from_class):
     def __init__(self):
@@ -26,7 +26,7 @@ class ADAS_ui(QDialog, from_class):
         self.w1, self.h1 = self.Screen1.width(), self.Screen1.height()
         self.pixmap1 = QPixmap(self.w1, self.h1)
         self.DrowseDetectionModel = DrowseDetectionModel()
-        self.DrowseDetectionModel.get_state_dict('src/UI/Detection/Drowsy')
+        self.DrowseDetectionModel.get_state_dict('src/ADAS_Service/Detection/Drowsy')
         self.FaceDetection = DetectionModel()
 
         # CAM1 Setting
@@ -37,11 +37,11 @@ class ADAS_ui(QDialog, from_class):
         # Arduino Setting
         self.Arduino1 = Arduino()
         self.Arduino1.esp32_ip = '192.168.2.218'
-        self.Arduino1.distance_signal.connect(self.GetDistance)
+        # self.Arduino1.distance_signal.connect(self.GetDistance)
 
         self.Arduino2 = Arduino()
         self.Arduino2.esp32_ip = '192.168.2.217'
-        # self.Arduino1.distance_signal.connect(self.GetDistance)
+        self.Arduino2.distance_signal.connect(self.GetDistance)
 
         self.btnPower.clicked.connect(self.Click_Power)
         self.btnGo.clicked.connect(self.Click_Go)
@@ -117,29 +117,25 @@ class ADAS_ui(QDialog, from_class):
 
     def GetDistance(self, distance):
         
-        if distance == '-1':
-            self.Front.setText('Drowsy')
-        else:
-            self.Front.setText(distance + 'cm')
-            try:
-                if eval(distance) < 10:
-                    self.Front.setStyleSheet("border: 3px solid red")
-                elif eval(distance) < 20:
-                    self.Front.setStyleSheet("border: 3px solid green")
-                else:
-                    self.Front.setStyleSheet("border: 1px solid black")
-            except:
-                self.Front.setText('No Signal')
+        # distance = self.Arduino1.client_socket.recv(1024)
+        self.Front.setText(distance + 'cm')
+        try:
+            if eval(distance) < 10:
+                self.Front.setStyleSheet("border: 3px solid red")
+            elif eval(distance) < 20:
+                self.Front.setStyleSheet("border: 3px solid green")
+            else:
+                self.Front.setStyleSheet("border: 1px solid black")
+        except:
+            self.Front.setText('No Signal')
 
     def sent_Drowsy(self):
         
         self.isDrowsy2 = self.isDrowsy1
         if self.isDrowsy1:
-            self.Arduino1.client_socket.send('Drowsy'.encode())
-            self.Arduino2.client_socket.send('on'.encode())
+            self.Arduino2.client_socket.send('Drowsy'.encode())
         else:
-            self.Arduino1.client_socket.send('Normal'.encode())
-            self.Arduino2.client_socket.send('off'.encode())
+            self.Arduino2.client_socket.send('Normal'.encode())
 
     def updateCAM1(self):
         ret, self.frame1 = self.video1.read()
@@ -167,3 +163,5 @@ if __name__ == "__main__":
     window = ADAS_ui()
     window.show()
     app.exec_()
+
+    

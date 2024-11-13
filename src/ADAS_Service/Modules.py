@@ -54,9 +54,9 @@ class Arduino(QThread):
         while True:
             try:
                 data = self.client_socket.recv(1024)
-                self.distance_signal.emit(data)  # 시그널로 데이터 전달
+                self.distance_signal.emit(str(int(data.decode())))  # 시그널로 데이터 전달
             except:
-                return 
+                pass
 
     def stop(self):
         print('ESP32 Disconnected')
