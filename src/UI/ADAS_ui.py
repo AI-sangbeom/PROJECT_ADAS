@@ -21,6 +21,8 @@ class ADAS_ui(QDialog, from_class):
         self.end = 0
         self.duration = 0
         self.isPowerOn = False
+        self.isDrowsy1 = False
+        self.isDrowsy2 = False
         self.w1, self.h1 = self.Screen1.width(), self.Screen1.height()
         self.pixmap1 = QPixmap(self.w1, self.h1)
         self.DrowseDetectionModel = DrowseDetectionModel()
@@ -33,10 +35,37 @@ class ADAS_ui(QDialog, from_class):
         self.CAM1.update.connect(self.updateCAM1)
 
         # Arduino Setting
-        self.Arduino = Arduino()
-        self.Arduino.distance_signal.connect(self.GetDistance)
+        self.Arduino1 = Arduino()
+        self.Arduino1.esp32_ip = '192.168.2.218'
+        self.Arduino1.distance_signal.connect(self.GetDistance)
+
+        self.Arduino2 = Arduino()
+        self.Arduino2.esp32_ip = '192.168.2.217'
+        # self.Arduino1.distance_signal.connect(self.GetDistance)
 
         self.btnPower.clicked.connect(self.Click_Power)
+        self.btnGo.clicked.connect(self.Click_Go)
+        self.btnBack.clicked.connect(self.Click_Back)
+        self.btnStop.clicked.connect(self.Click_Stop)
+
+    def Click_Go(self):
+        try:
+            self.Arduino1.client_socket.send('go'.encode())
+        except:
+            pass
+
+    def Click_Back(self):
+        try:
+            self.Arduino1.client_socket.send('back'.encode())
+        except:
+            pass
+
+    def Click_Stop(self):
+        try:
+            self.Arduino1.client_socket.send('stop'.encode())
+
+        except:
+            pass
 
     def DrowsyDetection(self, frame):
         try:
@@ -48,24 +77,19 @@ class ADAS_ui(QDialog, from_class):
                 if self.duration > 2:
                     self.Drowsy.setStyleSheet("background-color: red")
                     self.Screen1.setStyleSheet("border: 5px solid red")
-                    try:
-                        self.Arduino.serial_port.write('0'.encode())
-                    except:
-                        pass
+                    self.isDrowsy1 = True
             else:
                 self.start = time.time()
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 self.Drowsy.setStyleSheet("background-color: green")
                 self.Screen1.setStyleSheet("border: 3px solid green")
-                try:
-                    self.Arduino.serial_port.write('1'.encode())
-                except:
-                    pass
+                self.isDrowsy1 = False
         except:
+            self.start = time.time()
+            self.isDrowsy1 = False
             self.Drowsy.setStyleSheet("background-color: white")
             self.Screen1.setStyleSheet("border: 1px solid white")
             
-
     def ScreenOFF(self):
         self.pixmap1.fill(QColor(0, 0, 0))
         self.Screen1.setPixmap(self.pixmap1)
@@ -75,14 +99,18 @@ class ADAS_ui(QDialog, from_class):
             self.isPowerOn = True
             self.CAM1.start()
             self.CAM1.isRunning = True
-            self.Arduino.start()
+            self.Arduino1.start()
+            self.Arduino2.start()
             self.video1 = cv2.VideoCapture(-1)
         else:
             self.isPowerOn = False
             self.CAM1.stop()
             self.CAM1.isRunning = False
-            self.Arduino.stop()
-            self.Arduino.quit()
+            self.Arduino1.stop()
+            self.Arduino1.quit()
+            self.Arduino2.stop()
+            self.Arduino2.quit()
+
             self.video1.release()
             self.ScreenOFF()
 
@@ -103,7 +131,15 @@ class ADAS_ui(QDialog, from_class):
             except:
                 self.Front.setText('No Signal')
 
-
+    def sent_Drowsy(self):
+        
+        self.isDrowsy2 = self.isDrowsy1
+        if self.isDrowsy1:
+            self.Arduino1.client_socket.send('Drowsy'.encode())
+            self.Arduino2.client_socket.send('on'.encode())
+        else:
+            self.Arduino1.client_socket.send('Normal'.encode())
+            self.Arduino2.client_socket.send('off'.encode())
 
     def updateCAM1(self):
         ret, self.frame1 = self.video1.read()
@@ -112,6 +148,9 @@ class ADAS_ui(QDialog, from_class):
             frame = cv2.cvtColor(self.frame1, cv2.COLOR_BGR2RGB)
             frame = cv2.flip(frame, 1)
             self.DrowsyDetection(frame)
+            
+            if self.isDrowsy1 != self.isDrowsy2:
+                self.sent_Drowsy()
 
             self.end = time.time()
             self.duration = self.end - self.start
@@ -121,8 +160,6 @@ class ADAS_ui(QDialog, from_class):
             self.pixmap1 = self.pixmap1.fromImage(qImg)
             self.pixmap1 = self.pixmap1.scaled(self.w1, self.h1)
             self.Screen1.setPixmap(self.pixmap1)
-
-
 
 
 if __name__ == "__main__":

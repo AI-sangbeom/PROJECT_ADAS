@@ -5,6 +5,7 @@ import serial
 import torch
 import torch.nn as nn
 import numpy as np
+import socket
 from torchvision import  transforms
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -35,29 +36,31 @@ class Arduino(QThread):
     def __init__(self, parent=None):
         super().__init__()
         self.main = parent
-        self.serial_port = None
+        self.client_socket = None
+        self.esp32_ip = '192.168.2.218'  # ESP32의 IP 주소
+        self.esp32_port = 8080  # ESP32에서 설정한 포트
 
     def run(self):
         # 아두이노 시리얼 포트 열기
-        arduino_port = '/dev/ttyACM0'
-        baud_rate = 9600
         try:
-            self.serial_port = serial.Serial(arduino_port, baud_rate)
+            self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.client_socket.connect((self.esp32_ip, self.esp32_port))
             time.sleep(1)  # 시리얼 연결 대기
+            print('ESP32 Connected')
         except serial.SerialException as e:
             print(f"Could not open serial port: {e}")
             return
 
         while True:
             try:
-                data = self.serial_port.readline().decode().strip()  # 데이터 읽기
+                data = self.client_socket.recv(1024)
                 self.distance_signal.emit(data)  # 시그널로 데이터 전달
             except:
                 return 
 
     def stop(self):
-        if self.serial_port.is_open:
-            self.serial_port.close()  # 시리얼 포트 닫기
+        print('ESP32 Disconnected')
+        self.client_socket.close()  # 시리얼 포트 닫기
 
 
 class DrowseDetectionModel(nn.Module):
