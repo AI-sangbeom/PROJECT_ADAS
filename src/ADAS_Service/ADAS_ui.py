@@ -34,14 +34,15 @@ class ADAS_ui(QDialog, from_class):
         self.daemon = True
         self.CAM1.update.connect(self.updateCAM1)
 
+        self.msg_list = {'Go': '0', 'Stop': '0', 'Back': '0', 'Drowsy': '0'}
         # Arduino Setting
-        self.Arduino1 = Arduino()
-        self.Arduino1.esp32_ip = '192.168.2.218'
+        # self.Arduino1 = Arduino()
+        # self.Arduino1.esp32_ip = '192.168.2.218'
         # self.Arduino1.distance_signal.connect(self.GetDistance)
 
-        self.Arduino2 = Arduino()
-        self.Arduino2.esp32_ip = '192.168.2.217'
-        self.Arduino2.distance_signal.connect(self.GetDistance)
+        self.ADAS_CAR = Arduino()
+        self.ADAS_CAR.esp32_ip = '192.168.2.218'
+        self.ADAS_CAR.distance_signal.connect(self.GetDistance)
 
         self.btnPower.clicked.connect(self.Click_Power)
         self.btnGo.clicked.connect(self.Click_Go)
@@ -50,22 +51,38 @@ class ADAS_ui(QDialog, from_class):
 
     def Click_Go(self):
         try:
-            self.Arduino1.client_socket.send('go'.encode())
+            self.msg_list['Stop'] = '0'
+            self.msg_list['Back'] = '0'
+            self.msg_list['Go'] = '1'
+            self.label_4.setText('Front')
+            self.Direction.setText('Forward')
+            # pass
         except:
             pass
+        self.sent_MSG()
 
     def Click_Back(self):
         try:
-            self.Arduino1.client_socket.send('back'.encode())
+            self.msg_list['Stop'] = '0'
+            self.msg_list['Go'] = '0'
+            self.msg_list['Back'] = '1'
+            self.label_4.setText('Back')
+            self.Direction.setText('Backward')
         except:
             pass
+        self.sent_MSG()
 
     def Click_Stop(self):
         try:
-            self.Arduino1.client_socket.send('stop'.encode())
-
+            self.msg_list['Stop'] = '1'
+            self.msg_list['Go'] = '0'
+            self.msg_list['Back'] = '0'
+            self.label_4.setText('Front')
+            self.Direction.setText('Stop')
+            # pass
         except:
             pass
+        self.sent_MSG()
 
     def DrowsyDetection(self, frame):
         try:
@@ -85,6 +102,7 @@ class ADAS_ui(QDialog, from_class):
                 self.Screen1.setStyleSheet("border: 3px solid green")
                 self.isDrowsy1 = False
         except:
+            self.msg_list['Drowsy'] = '0'
             self.start = time.time()
             self.isDrowsy1 = False
             self.Drowsy.setStyleSheet("background-color: white")
@@ -99,17 +117,17 @@ class ADAS_ui(QDialog, from_class):
             self.isPowerOn = True
             self.CAM1.start()
             self.CAM1.isRunning = True
-            self.Arduino1.start()
-            self.Arduino2.start()
+            self.ADAS_CAR.start()
             self.video1 = cv2.VideoCapture(-1)
+            self.Direction.setText('Stop')
+
         else:
             self.isPowerOn = False
             self.CAM1.stop()
             self.CAM1.isRunning = False
-            self.Arduino1.stop()
-            self.Arduino1.quit()
-            self.Arduino2.stop()
-            self.Arduino2.quit()
+            self.ADAS_CAR.stop()
+            self.ADAS_CAR.quit()
+            self.Direction.setText('')
 
             self.video1.release()
             self.ScreenOFF()
@@ -118,24 +136,31 @@ class ADAS_ui(QDialog, from_class):
     def GetDistance(self, distance):
         
         # distance = self.Arduino1.client_socket.recv(1024)
-        self.Front.setText(distance + 'cm')
         try:
-            if eval(distance) < 10:
-                self.Front.setStyleSheet("border: 3px solid red")
-            elif eval(distance) < 20:
-                self.Front.setStyleSheet("border: 3px solid green")
-            else:
-                self.Front.setStyleSheet("border: 1px solid black")
+            self.Front.setText(distance + 'cm')
+            # if eval(distance) < 10:
+            #     self.Front.setStyleSheet("border: 3px solid red")
+            # elif eval(distance) < 20:
+            #     self.Front.setStyleSheet("border: 3px solid green")
+            # else:
+            #     self.Front.setStyleSheet("border: 1px solid black")
         except:
             self.Front.setText('No Signal')
 
-    def sent_Drowsy(self):
+
+    def sent_MSG(self):
+        msg = ''.join(list(self.msg_list.values())) + '\n'
+        self.ADAS_CAR.client_socket.send(msg.encode())
+
+    def send_Drowsy(self):
         
         self.isDrowsy2 = self.isDrowsy1
         if self.isDrowsy1:
-            self.Arduino2.client_socket.send('Drowsy'.encode())
+            self.msg_list['Drowsy'] = '1'
         else:
-            self.Arduino2.client_socket.send('Normal'.encode())
+            self.msg_list['Drowsy'] = '0'
+        
+        self.sent_MSG()
 
     def updateCAM1(self):
         ret, self.frame1 = self.video1.read()
@@ -146,7 +171,7 @@ class ADAS_ui(QDialog, from_class):
             self.DrowsyDetection(frame)
             
             if self.isDrowsy1 != self.isDrowsy2:
-                self.sent_Drowsy()
+                self.send_Drowsy()
 
             self.end = time.time()
             self.duration = self.end - self.start

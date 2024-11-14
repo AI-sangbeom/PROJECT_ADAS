@@ -38,9 +38,9 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>140</x>
      <y>10</y>
-     <width>201</width>
+     <width>151</width>
      <height>101</height>
     </rect>
    </property>
@@ -74,74 +74,46 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel{
-	font:13pt;
-	color: white;
+	font:12pt;
+ font-weight: bold;	color: blakc;
 }</string>
     </property>
     <property name="text">
-     <string>Front :</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="Back">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>60</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	font: 12pt
-}</string>
+     <string>Front</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="Front">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>10</x>
       <y>30</y>
-      <width>121</width>
-      <height>31</height>
+      <width>131</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	font: 13pt
-}</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>51</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLabel{
-	font:13pt;
-	color: white;
+	font-weight: bold; font: 14pt
 }</string>
     </property>
     <property name="text">
-     <string>Back  :</string>
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>300</x>
      <y>10</y>
      <width>141</width>
      <height>101</height>
@@ -171,7 +143,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	font: 13pt
+	font-weight: bold; font: 14pt
 }</string>
     </property>
     <property name="alignment">
@@ -185,7 +157,7 @@
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>600</x>
      <y>10</y>
      <width>141</width>
      <height>101</height>
@@ -215,7 +187,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	font: 13pt
+	font-weight: bold; font: 14pt
 }</string>
     </property>
     <property name="alignment">
@@ -229,7 +201,7 @@
   <widget class="QGroupBox" name="groupBox_4">
    <property name="geometry">
     <rect>
-     <x>470</x>
+     <x>450</x>
      <y>10</y>
      <width>141</width>
      <height>101</height>
@@ -259,7 +231,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	font: 13pt
+	font-weight: bold; font: 14pt
 }</string>
     </property>
     <property name="alignment">
@@ -332,7 +304,7 @@
   <widget class="QLabel" name="BackGround">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>-10</x>
      <y>0</y>
      <width>1111</width>
      <height>781</height>

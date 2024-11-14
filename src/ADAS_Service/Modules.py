@@ -44,7 +44,9 @@ class Arduino(QThread):
         # 아두이노 시리얼 포트 열기
         try:
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # self.client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) 
             self.client_socket.connect((self.esp32_ip, self.esp32_port))
+            self.client_socket.settimeout(0.05) 
             time.sleep(1)  # 시리얼 연결 대기
             print('ESP32 Connected')
         except serial.SerialException as e:
@@ -53,8 +55,9 @@ class Arduino(QThread):
 
         while True:
             try:
-                data = self.client_socket.recv(1024)
-                self.distance_signal.emit(str(int(data.decode())))  # 시그널로 데이터 전달
+                data = self.client_socket.recv(1024).decode()
+                self.distance_signal.emit(str(int(data)))  # 시그널로 데이터 전달
+                time.sleep(0.05)
             except:
                 pass
 

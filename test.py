@@ -15,9 +15,10 @@ while True:
     # ESP32에서 받은 데이터 수신
     # client_socket.send('Hello, ESP32!'.encode())
     data = client_socket.recv(1024)
-    if not(len(data.decode()) ==37):
-        pass
-    else:
-        print("Received from ESP32:", data.decode())
+    # if not(len(data.decode()) ==37):
+    #     pass
+    # else:
+    client_socket.send('Hello, ESP32! \n'.encode())
+    print("Received from ESP32:", data.decode())
 
 
