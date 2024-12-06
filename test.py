@@ -23,5 +23,6 @@ try:
     # time.sleep(1)  # 시리얼 연결 대기
     print('ESP32 Connected')
 except serial.SerialException as e:
-    print(f"Could not open port: {e}")
+    print(f"Could not open serial port: {e}")
     print('hello')
+    print('hihii')
