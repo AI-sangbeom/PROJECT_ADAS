@@ -25,4 +25,3 @@ try:
 except serial.SerialException as e:
     print(f"Could not open  port: {e}")
     print('hello')
-    print('hihii')
