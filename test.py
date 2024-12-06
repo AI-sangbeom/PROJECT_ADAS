@@ -24,3 +24,5 @@ try:
     print('ESP32 Connected')
 except serial.SerialException as e:
     print(f"Could not open serial port: {e}")
+    print(f"Could not open serial port: {e}")
+    print(f"Could not open serial port: {e}")
