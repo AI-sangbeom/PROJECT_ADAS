@@ -21,7 +21,7 @@ try:
     # self.client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1) 
     client_socket.connect((esp32_ip, esp32_port))
     # time.sleep(1)  # 시리얼 연결 대기
-    print('ESP32 Connected')
+    print('ESP32 ')
 except serial.SerialException as e:
     print(f"Could not open  port: {e}")
     print('hello')
